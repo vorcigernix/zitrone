@@ -1,9 +1,9 @@
-import { listGuestbookEntries, createGuestbookEntry } from "@/lib/fauna";
+import { listEventEntries, createEventEntry } from "@/lib/fauna";
 
 export default async function handler(req, res) {
 	const handlers = {
 		GET: async () => {
-			const entries = await listGuestbookEntries();
+			const entries = await listEventEntries();
 			res.json(entries);
 		},
 
@@ -11,7 +11,7 @@ export default async function handler(req, res) {
 			const {
 				body: { name, message },
 			} = req;
-			const created = await createGuestbookEntry({
+			const created = await createEventEntry({
 				name,
 				message,
 				createdAt: new Date(),

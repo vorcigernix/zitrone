@@ -2,7 +2,7 @@
 // Look at the code to see what is behind the magic
 const fs = require('fs')
 const readline = require('readline')
-const request = require('request')
+const https = require('https');
 const { Client, query: Q } = require('faunadb')
 const streamToPromise = require('stream-to-promise')
 
@@ -20,6 +20,8 @@ const MakeLatestEntriesIndex = () =>
       },
     ],
   })
+
+
 
 const MakeListLatestEntriesUdf = () =>
   Q.Update(Q.Function('listLatestEntries'), {
@@ -142,12 +144,12 @@ const main = async () => {
   const adminKey = await resolveAdminKey()
   const client = new Client({ secret: adminKey })
 
-  if (await isDatabasePrepared({ client })) {
-    return console.info(
-      'Fauna resources have already been prepared. ' +
-        'If you want to install it once again, please, create a fresh database and re-run the script with the other key'
-    )
-  }
+  // if (await isDatabasePrepared({ client })) {
+  //   return console.info(
+  //     'Fauna resources have already been prepared. ' +
+  //       'If you want to install it once again, please, create a fresh database and re-run the script with the other key'
+  //   )
+  // }
 
   const importMsg = await importSchema(adminKey)
   const importErrorMsg = findImportError(importMsg)
@@ -158,26 +160,26 @@ const main = async () => {
 
   console.log('- Successfully imported schema')
 
-  for (const Make of [
-    MakeLatestEntriesIndex,
-    MakeListLatestEntriesUdf,
-    MakeGuestbookRole,
-  ]) {
-    await client.query(Make())
-  }
+  // for (const Make of [
+  //   MakeLatestEntriesIndex,
+  //   MakeListLatestEntriesUdf,
+  //   MakeGuestbookRole,
+  // ]) {
+  //   await client.query(Make())
+  // }
 
-  console.log('- Created Fauna resources')
+  // console.log('- Created Fauna resources')
 
-  if (process.env.FAUNA_ADMIN_KEY) {
-    // Assume it's a Vercel environment, no need for .env.local file
-    return
-  }
+  // if (process.env.FAUNA_ADMIN_KEY) {
+  //   // Assume it's a Vercel environment, no need for .env.local file
+  //   return
+  // }
 
-  const { secret } = await client.query(MakeGuestbookKey())
+  // const { secret } = await client.query(MakeGuestbookKey())
 
-  await fs.promises.writeFile('.env.local', `FAUNA_CLIENT_SECRET=${secret}\n`)
+  // await fs.promises.writeFile('.env.local', `FAUNA_CLIENT_SECRET=${secret}\n`)
 
-  console.log('- Created .env.local file with secret')
+  // console.log('- Created .env.local file with secret')
 }
 
 main().catch((err) => {

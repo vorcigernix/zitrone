@@ -3,8 +3,7 @@ import { useState } from "react";
 import cn from "classnames";
 import formatDate from "date-fns/format";
 import useSWR, { mutate, SWRConfig } from "swr";
-import "tailwindcss/tailwind.css";
-import { listGuestbookEntries } from "@/lib/fauna";
+import { listEventEntries } from "@/lib/fauna";
 import SuccessMessage from "@/components/SuccessMessage";
 import ErrorMessage from "@/components/ErrorMessage";
 import LoadingSpinner from "@/components/LoadingSpinner";
@@ -170,7 +169,7 @@ const Guestbook = ({ fallback }) => {
 };
 
 export async function getStaticProps() {
-	const entries = await listGuestbookEntries();
+	const entries = await listEventEntries();
 	return {
 		props: {
 			fallback: {
